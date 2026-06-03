@@ -1,0 +1,14 @@
+streamlit
+pandas
+numpy
+mysql-connector-python
+matplotlib
+yfinance
+plotly
+joblib
+groq
+python-dotenv
+streamlit-autorefresh
+scikit-learn
+tensorflow
+keras
