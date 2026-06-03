@@ -19,29 +19,35 @@ from streamlit_autorefresh import st_autorefresh
 # ================= PAGE CONFIG =================
 st.set_page_config(
     page_title="FinGen AI",
-    page_icon="C:\\Users\\User\\Desktop\\capstone\\logo.png",
+    page_icon="logo.png", 
     layout="wide",
     initial_sidebar_state="expanded"
 )
-col1, col2 = st.columns([1,6])
 
-logo_path = "C:\\Users\\User\\Desktop\\capstone\\logo.png"
+# ================= SAFE LOGO PATH =================
+BASE_DIR = os.path.dirname(__file__)
+logo_path = os.path.join(BASE_DIR, "logo.png")
+
+# ================= HEADER =================
+col1, col2 = st.columns([1, 6])
 
 with col1:
-    if os.path.exists(logo_path):
+    if os.path.isfile(logo_path):
         st.image(logo_path, width=90)
     else:
-        st.warning("Logo not found")
+        st.warning("⚠️ Logo not found (check logo.png in project folder)")
+
 with col2:
     st.markdown("""
     <div class="custom-header">
-        <div class="title"> FinGen AI</div>
+        <div class="title">💰 FinGen AI</div>
         <div class="subtitle">
             AI Powered Smart Financial Dashboard
         </div>
     </div>
     """, unsafe_allow_html=True)
 
+# ================= AUTO REFRESH =================
 st_autorefresh(interval=1000, key="clockrefresh")
 
 
