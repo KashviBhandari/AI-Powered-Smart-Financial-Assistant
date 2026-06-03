@@ -25,7 +25,7 @@ st.set_page_config(
 )
 col1, col2 = st.columns([1,6])
 
-logo_path = r"C:\\Users\\User\\Desktop\\capstone\\logo.png"
+logo_path = "C:\\Users\\User\\Desktop\\capstone\\logo.png"
 
 with col1:
     if os.path.exists(logo_path):
