@@ -505,21 +505,13 @@ st.sidebar.markdown("""
 #=========================================================
 # MYSQL CONNECTION
 # =========================================================
-import mysql.connector
-
-try:
-    conn = mysql.connector.connect(
-        host="localhost",
-        user="  root",
-        password="admin",
-        database="finance_db",
-        port=3306
-    )
-    cursor = conn.cursor()
-
-except mysql.connector.Error as err:
-    st.error("⚠️ Database connection failed. Please check MySQL settings.")
-    st.stop()
+conn = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="admin",
+    database="finance_db"
+)
+cursor = conn.cursor()
 
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS personal_finance(
