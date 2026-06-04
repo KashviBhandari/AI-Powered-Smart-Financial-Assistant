@@ -8,7 +8,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 import joblib
 import datetime
-from datetime import datetime
 import time
 from groq import Groq
 from dotenv import load_dotenv
