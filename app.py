@@ -1944,7 +1944,7 @@ mode = st.radio(
     # -------------------------------
     # LIVE DATA
     # -------------------------------
-if mode == "📡 Live Data":
+    if mode == "📡 Live Data":
 
         st.subheader("📉 Stock Chart + Smart Trend")
 
