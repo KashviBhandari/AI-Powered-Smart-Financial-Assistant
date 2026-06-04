@@ -1107,179 +1107,205 @@ elif menu == "Personal Finance":
 # =========================================================
 
 elif menu == "Business Finance":
+
     st.subheader("📊 Business Finance AI Dashboard")
     st.write("Start adding your business data 🚀")
 
-
     option = st.radio(
         "Select Option",
-        [
-            "Retail Selling",
-            "Manufacturing Calculator"
-        ],
+        ["Retail Selling", "Manufacturing Calculator"],
         horizontal=True
-    )  
+    )
 
+    # ==========================================================
+    # RETAIL SELLING
+    # ==========================================================
     if option == "Retail Selling":
 
-    
-                if "finance_data" not in st.session_state:
-                 st.session_state.finance_data = pd.DataFrame(columns=[
-                    "Date",
-                    "Product",
-                    "Category",
-                    "Quantity",
-                    "Purchase Price",
-                    "Selling Price",
-                    "Revenue",
-                    "Cost",
-                    "Profit"
-                ])
+        if "finance_data" not in st.session_state:
+            st.session_state.finance_data = pd.DataFrame(columns=[
+                "Date",
+                "Product",
+                "Category",
+                "Quantity",
+                "Purchase Price",
+                "Selling Price",
+                "Revenue",
+                "Cost",
+                "Profit"
+            ])
 
-                df = st.session_state.finance_data
+        st.subheader("➕ Add New Record")
 
-    
-            # =========================================================
-            # INPUT SECTION
-            # =========================================================
+        col1, col2, col3 = st.columns(3)
 
-                st.subheader("➕ Add New Record")
+        with col1:
+            date = st.date_input("Date")
+            product = st.text_input("Product Name")
 
-                c1, c2, c3 = st.columns(3)
+        with col2:
+            category = st.selectbox(
+                "Category",
+                [
+                    "Grocery",
+                    "Skincare",
+                    "Electronics",
+                    "Fashion Boutique",
+                    "Clothing",
+                    "Stationary",
+                    "Accessories",
+                    "Restaurants",
+                    "Cafés",
+                    "Automotive Parts",
+                    "Home Decor",
+                    "Other"
+                ]
+            )
 
-                with c1:
-                    date = st.date_input(
-                        "Date",
-                        key="retail_date"
-                    )
+            quantity = st.number_input(
+                "Quantity",
+                min_value=1,
+                value=1
+            )
 
-                    product = st.text_input(
-                        "Product Name",
-                        key="retail_product"
-                    )
+        with col3:
+            purchase_price = st.number_input(
+                "Purchase Price (₹)",
+                min_value=0.0
+            )
 
-                with c2:
-                    category = st.selectbox(
-                        "Category",
-                        [ "Grocery", "Skincare", "Electronics","Fashion Boutique", "Clothing","Stationary","Accessories","Restaurants"
-                            "Cafés","Automotive Parts","Home Decor","Other"]
-                    )
-                    quantity = st.number_input("Quantity", min_value=1)
+            selling_price = st.number_input(
+                "Selling Price (₹)",
+                min_value=0.0
+            )
 
-                with c3:
-                    purchase_price = st.number_input("Purchase Price(₹)", min_value=0.0)
-                    selling_price = st.number_input("Selling Price(₹)", min_value=0.0)
+        revenue = quantity * selling_price
+        cost = quantity * purchase_price
+        profit = revenue - cost
 
-                # =========================================================
-                # CALCULATIONS
-                # =========================================================
+        st.subheader("🧾 Live Preview")
 
-                revenue = quantity * selling_price
-                cost = quantity * purchase_price
-                profit = revenue - cost
+        c1, c2, c3 = st.columns(3)
 
-                st.subheader("🧾 Live Preview")
+        c1.metric("Cost", f"₹ {cost:,.2f}")
+        c2.metric("Revenue", f"₹ {revenue:,.2f}")
+        c3.metric("Profit", f"₹ {profit:,.2f}")
 
-                c1, c2, c3 = st.columns(3)
-                c1.metric("Cost", f"₹ {cost:.2f}")
-                c2.metric("Revenue", f"₹ {revenue:.2f}")
-                c3.metric("Profit", f"₹ {profit:.2f}")
+        if st.button("➕ Add Record"):
 
-                # =========================================================
-                # ADD DATA
-                # =========================================================
+            if product.strip() == "":
+                st.warning("Enter Product Name")
 
-                if st.button("➕ Add Record"):
+            else:
 
-                    if product.strip() == "":
-                        st.warning("Enter product name")
-                    else:
-                        new_row = pd.DataFrame([{
-                            "Date": pd.to_datetime(date),
-                            "Product": product,
-                            "Category": category,
-                            "Quantity": quantity,
-                            "Purchase Price": purchase_price,
-                            "Selling Price": selling_price,
-                            "Revenue": revenue,
-                            "Cost": cost,
-                            "Profit": profit
-                        }])
+                new_row = pd.DataFrame([{
+                    "Date": pd.to_datetime(date),
+                    "Product": product,
+                    "Category": category,
+                    "Quantity": quantity,
+                    "Purchase Price": purchase_price,
+                    "Selling Price": selling_price,
+                    "Revenue": revenue,
+                    "Cost": cost,
+                    "Profit": profit
+                }])
 
-                        st.session_state.finance_data = pd.concat(
-                            [st.session_state.finance_data, new_row],
-                            ignore_index=True
-                        )
+                st.session_state.finance_data = pd.concat(
+                    [st.session_state.finance_data, new_row],
+                    ignore_index=True
+                )
 
-                        st.success("Record Added!")
+                st.success("Record Added Successfully")
 
-                df = st.session_state.finance_data
+        df = st.session_state.finance_data
 
-                # =========================================================
-                # SHOW DATA
-                # =========================================================
+        st.subheader("📋 All Records")
+        st.dataframe(df, use_container_width=True)
 
-                st.subheader("📋 All Records")
-                st.dataframe(df, use_container_width=True)
+        if not df.empty:
 
-                # =========================================================
-                # ANALYTICS (ONLY IF DATA EXISTS)
-                # =========================================================
+            st.subheader("📈 Business Overview")
 
-                if not df.empty:
+            total_revenue = df["Revenue"].sum()
+            total_cost = df["Cost"].sum()
+            total_profit = df["Profit"].sum()
 
-                    st.subheader("Overview")
+            c1, c2, c3 = st.columns(3)
 
-                    total_revenue = df["Revenue"].sum()
-                    total_cost = df["Cost"].sum()
-                    total_profit = df["Profit"].sum()
+            c1.metric(
+                "Total Revenue",
+                f"₹ {total_revenue:,.0f}"
+            )
 
-                    c1, c2, c3 = st.columns(3)
-                    c1.metric("Total Revenue", f"₹ {total_revenue:,.0f}")
-                    c2.metric("Total Cost", f"₹ {total_cost:,.0f}")
-                    c3.metric("Total Profit", f"₹ {total_profit:,.0f}")
+            c2.metric(
+                "Total Cost",
+                f"₹ {total_cost:,.0f}"
+            )
 
-                    # Best product
-                    best_product = df.groupby("Product")["Profit"].sum().idxmax()
-                    st.success(f"🏆 Best Product: {best_product}")
+            c3.metric(
+                "Total Profit",
+                f"₹ {total_profit:,.0f}"
+            )
 
-                    # =====================================================
-                    # CHARTS
-                    # =====================================================
+            best_product = (
+                df.groupby("Product")["Profit"]
+                .sum()
+                .idxmax()
+            )
 
-                    st.subheader("Charts")
+            st.success(
+                f"🏆 Best Product: {best_product}"
+            )
 
-                    fig1 = px.bar(
-                        df.groupby("Product", as_index=False)["Profit"].sum(),
-                        x="Product",
-                        y="Profit",
-                        title="Profit by Product"
-                    )
-                    st.plotly_chart(fig1, use_container_width=True)
+            st.subheader("📊 Analytics")
 
-                    fig2 = px.pie(
-                        df.groupby("Category", as_index=False)["Revenue"].sum(),
-                        names="Category",
-                        values="Revenue",
-                        title="Revenue Share by Category"
-                    )
-                    st.plotly_chart(fig2, use_container_width=True)
+            profit_df = (
+                df.groupby("Product", as_index=False)
+                ["Profit"]
+                .sum()
+            )
 
-                    
+            fig1 = px.bar(
+                profit_df,
+                x="Product",
+                y="Profit",
+                title="Profit by Product"
+            )
+
+            st.plotly_chart(
+                fig1,
+                use_container_width=True
+            )
+
+            revenue_df = (
+                df.groupby("Category", as_index=False)
+                ["Revenue"]
+                .sum()
+            )
+
+            fig2 = px.pie(
+                revenue_df,
+                names="Category",
+                values="Revenue",
+                title="Revenue Share by Category"
+            )
+
+            st.plotly_chart(
+                fig2,
+                use_container_width=True
+            )
+
+    # ==========================================================
+    # MANUFACTURING CALCULATOR
+    # ==========================================================
     elif option == "Manufacturing Calculator":
 
-     st.title("🏭 Manufacturing Product Price Calculator")
+        st.title("🏭 Manufacturing Product Price Calculator")
 
-    # ================= PRODUCT DETAILS =================
-
-    col1, col2 = st.columns(2)
-
-    with col1:
         product_name = st.text_input("Product Name")
 
-    with col2:
         category = st.selectbox(
-            "🏷️ Product Category",
+            "Product Category",
             [
                 "Food Products",
                 "Textile Products",
@@ -1294,233 +1320,158 @@ elif menu == "Business Finance":
             ]
         )
 
-    # ================= RAW MATERIALS =================
-
         st.subheader("📦 Raw Materials")
-    
+
         num_materials = st.number_input(
             "Number of Materials",
             min_value=1,
             max_value=20,
             value=3
         )
-    
+
         materials = []
         total_raw_material_cost = 0
-    
+
         for i in range(int(num_materials)):
-    
+
             st.markdown(f"### Material {i+1}")
-    
-            col1, col2, col3, col4 = st.columns(4)
-    
-            with col1:
+
+            c1, c2, c3, c4 = st.columns(4)
+
+            with c1:
                 material_name = st.text_input(
                     "Material Name",
-                    key=f"material_{i}"
+                    key=f"name_{i}"
                 )
-    
-            with col2:
-                quantity = st.number_input(
+
+            with c2:
+                qty = st.number_input(
                     "Quantity",
                     min_value=0.0,
                     key=f"qty_{i}"
                 )
-    
-            with col3:
+
+            with c3:
                 unit = st.selectbox(
                     "Unit",
-                    ["Kg", "Gram", "Litre", "ML", "Piece", "Meter", "Pack"],
+                    ["Kg", "Gram", "Litre", "ML", "Piece"],
                     key=f"unit_{i}"
                 )
-    
-            with col4:
+
+            with c4:
                 rate = st.number_input(
-                    f"Rate per {unit} (₹)",
+                    "Rate",
                     min_value=0.0,
                     key=f"rate_{i}"
                 )
-    
-            material_cost = quantity * rate
-    
+
+            material_cost = qty * rate
+
             materials.append({
                 "Material": material_name,
-                "Quantity": quantity,
+                "Quantity": qty,
                 "Unit": unit,
                 "Rate": rate,
                 "Cost": material_cost
             })
-    
+
             total_raw_material_cost += material_cost
 
-    # ================= MATERIAL TABLE =================
+        st.metric(
+            "Total Raw Material Cost",
+            f"₹ {total_raw_material_cost:,.2f}"
+        )
 
-    st.subheader("📋 Material Cost Sheet")
+        labor = st.number_input(
+            "Labor Cost (₹)",
+            min_value=0.0
+        )
 
-    material_df = pd.DataFrame(materials)
+        machine = st.number_input(
+            "Machine Cost (₹)",
+            min_value=0.0
+        )
 
-    st.dataframe(
-        material_df,
-        use_container_width=True
-    )
+        packaging = st.number_input(
+            "Packaging Cost (₹)",
+            min_value=0.0
+        )
 
-    st.metric(
-        "💰 Total Raw Material Cost",
-        f"₹ {total_raw_material_cost:,.2f}"
-    )
+        quantity_produced = st.number_input(
+            "Production Quantity",
+            min_value=1,
+            value=100
+        )
 
-    # ================= MANUFACTURING EXPENSES =================
-
-    st.subheader("🏭 Manufacturing Expenses")
-
-    c1, c2 = st.columns(2)
-
-    with c1:
-        labor = st.number_input("Labor Cost (₹)", min_value=0.0)
-        machine = st.number_input("Machine Cost (₹)", min_value=0.0)
-        electricity = st.number_input("Electricity Cost (₹)", min_value=0.0)
-
-    with c2:
-        packaging = st.number_input("Packaging Cost (₹)", min_value=0.0)
-        transportation = st.number_input("Transportation Cost (₹)", min_value=0.0)
-        other = st.number_input("Other Expenses (₹)", min_value=0.0)
-
-    # ================= PRODUCTION =================
-
-    st.subheader("🏗️ Production Details")
-
-    quantity_produced = st.number_input(
-        "Production Quantity",
-        min_value=1,
-        value=100
-    )
-
-    # ================= PROFIT & GST =================
-
-    st.subheader("📈 Profit & GST")
-
-    c1, c2 = st.columns(2)
-
-    with c1:
         profit_margin = st.number_input(
             "Profit Margin (%)",
             min_value=0.0,
-            max_value=100.0,
             value=20.0
         )
 
-    with c2:
         gst = st.number_input(
             "GST (%)",
             min_value=0.0,
-            max_value=50.0,
             value=18.0
         )
 
-    # ================= CALCULATE =================
+        if st.button("🧮 Calculate Product Price"):
 
-    if st.button("🧮 Calculate Product Price", use_container_width=True):
+            total_cost = (
+                total_raw_material_cost +
+                labor +
+                machine +
+                packaging
+            )
 
-        total_cost = (
-            total_raw_material_cost +
-            labor +
-            machine +
-            electricity +
-            packaging +
-            transportation +
-            other
-        )
+            cost_per_unit = (
+                total_cost /
+                quantity_produced
+            )
 
-        cost_per_unit = total_cost / quantity_produced
+            selling_price = (
+                cost_per_unit *
+                (1 + profit_margin / 100)
+            )
 
-        selling_price = cost_per_unit * (1 + profit_margin / 100)
+            final_price = (
+                selling_price *
+                (1 + gst / 100)
+            )
 
-        final_price = selling_price * (1 + gst / 100)
+            total_profit = (
+                (selling_price - cost_per_unit)
+                * quantity_produced
+            )
 
-        profit_per_unit = selling_price - cost_per_unit
+            revenue = (
+                final_price *
+                quantity_produced
+            )
 
-        total_profit = profit_per_unit * quantity_produced
+            st.success("Calculation Complete")
 
-        revenue = final_price * quantity_produced
+            c1, c2, c3, c4 = st.columns(4)
 
-        st.success("✅ Calculation Completed")
+            c1.metric(
+                "Cost / Unit",
+                f"₹ {cost_per_unit:,.2f}"
+            )
 
-        # ================= SUMMARY =================
+            c2.metric(
+                "Selling Price",
+                f"₹ {final_price:,.2f}"
+            )
 
-        st.subheader("📊 Business Summary")
-
-        col1, col2, col3, col4 = st.columns(4)
-
-        col1.metric("Cost / Unit", f"₹ {cost_per_unit:,.2f}")
-        col2.metric("Selling Price", f"₹ {final_price:,.2f}")
-        col3.metric("Total Profit", f"₹ {total_profit:,.2f}")
-        col4.metric("Revenue", f"₹ {revenue:,.2f}")
-
-        # ================= REPORT =================
-
-        st.subheader("📋 Manufacturing Report")
-
-        report_df = pd.DataFrame({
-            "Field": [
-                "Product Name",
-                "Category",
-                "Production Quantity",
-                "Total Manufacturing Cost",
-                "Cost Per Unit",
-                "Selling Price Per Unit",
-                "Profit Per Unit",
+            c3.metric(
                 "Total Profit",
-                "Revenue"
-            ],
-            "Value": [
-                product_name,
-                category,
-                quantity_produced,
-                f"₹ {total_cost:,.2f}",
-                f"₹ {cost_per_unit:,.2f}",
-                f"₹ {final_price:,.2f}",
-                f"₹ {profit_per_unit:,.2f}",
-                f"₹ {total_profit:,.2f}",
+                f"₹ {total_profit:,.2f}"
+            )
+
+            c4.metric(
+                "Revenue",
                 f"₹ {revenue:,.2f}"
-            ]
-        })
-
-        st.dataframe(
-            report_df,
-            use_container_width=True,
-            hide_index=True
-        )
-
-        # ================= SMART ANALYSIS =================
-
-        profit_percent = (
-            (profit_per_unit / cost_per_unit) * 100
-            if cost_per_unit > 0 else 0
-        )
-
-        st.subheader("🤖 Smart Analysis")
-
-        if profit_percent < 15:
-            st.error("Low Profit Margin. Consider reducing costs.")
-
-        elif profit_percent < 30:
-            st.warning("Moderate Profit Margin.")
-
-        else:
-            st.success("Excellent Profit Margin.")
-
-        # ================= DOWNLOAD REPORT =================
-
-        csv = report_df.to_csv(index=False)
-
-        st.download_button(
-            "📥 Download Report",
-            data=csv,
-            file_name=f"{product_name}_report.csv",
-            mime="text/csv"
-        )
-
-            
+            )
 # =========================================================
 # LOAN SYSTEM
 # =========================================================
