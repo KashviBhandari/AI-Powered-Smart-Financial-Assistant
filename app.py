@@ -1256,329 +1256,259 @@ elif menu == "Business Finance":
 
                     
 
-    elif option == "Manufacturing Calculator":
+   elif option == "Manufacturing Calculator":
 
-        st.title("Manufacturing Product Price Calculator")
+    st.title("🏭 Manufacturing Product Price Calculator")
 
+    # ================= PRODUCT DETAILS =================
 
-# ================= PRODUCT DETAILS =================
+    col1, col2 = st.columns(2)
 
-        col1, col2 = st.columns(2)
+    with col1:
+        product_name = st.text_input("Product Name")
 
-        with col1:
-            product_name = st.text_input("Product Name")
-
-        with col2:
-            category = st.selectbox(
-                "🏷️ Product Category",
-                [
-                    "Food Products",
-                    "Textile Products",
-                    "Furniture",
-                    "Electronics",
-                    "Cosmetics",
-                    "Plastic Products",
-                    "Packaging Products",
-                    "Automobile Parts",
-                    "Construction Materials",
-                    "Custom Product"
-                ]
-            )
-
-        # ================= RAW MATERIALS =================
-
-       # ================= RAW MATERIALS =================
-
-        st.subheader("📦 Raw Materials")
-
-        num_materials = st.number_input(
-            "Number of Materials",
-            min_value=1,
-            max_value=20,
-            value=3
+    with col2:
+        category = st.selectbox(
+            "🏷️ Product Category",
+            [
+                "Food Products",
+                "Textile Products",
+                "Furniture",
+                "Electronics",
+                "Cosmetics",
+                "Plastic Products",
+                "Packaging Products",
+                "Automobile Parts",
+                "Construction Materials",
+                "Custom Product"
+            ]
         )
 
-        materials = []
-        total_raw_material_cost = 0
+    # ================= RAW MATERIALS =================
 
-        for i in range(int(num_materials)):
+    st.subheader("📦 Raw Materials")
 
-            st.markdown(f"### Material {i+1}")
+    num_materials = st.number_input(
+        "Number of Materials",
+        min_value=1,
+        max_value=20,
+        value=3
+    )
 
-            col1, col2, col3, col4 = st.columns(4)
+    materials = []
+    total_raw_material_cost = 0
 
-            with col1:
-                material_name = st.text_input(
-                    "Material Name",
-                    key=f"material_{i}"
-                )
+    for i in range(int(num_materials)):
 
-            with col2:
-                quantity = st.number_input(
-                    "Quantity",
-                    min_value=0.0,
-                    key=f"qty_{i}"
-                )
+        st.markdown(f"### Material {i+1}")
 
-            with col3:
-                unit = st.selectbox(
-                    "Unit",
-                    [
-                        "Kg",
-                        "Gram",
-                        "Litre",
-                        "ML",
-                        "Piece",
-                        "Meter",
-                        "Pack"
-                    ],
-                    key=f"unit_{i}"
-                )
+        col1, col2, col3, col4 = st.columns(4)
 
-            with col4:
-                rate = st.number_input(
-                    f"Rate per {unit} (₹)",
-                    min_value=0.0,
-                    key=f"rate_{i}"
-                )
+        with col1:
+            material_name = st.text_input(
+                "Material Name",
+                key=f"material_{i}"
+            )
 
-            material_cost = quantity * rate
+        with col2:
+            quantity = st.number_input(
+                "Quantity",
+                min_value=0.0,
+                key=f"qty_{i}"
+            )
 
-            materials.append({
-                "Material": material_name,
-                "Quantity": quantity,
-                "Unit": unit,
-                "Rate": rate,
-                "Cost": material_cost
-            })
+        with col3:
+            unit = st.selectbox(
+                "Unit",
+                ["Kg", "Gram", "Litre", "ML", "Piece", "Meter", "Pack"],
+                key=f"unit_{i}"
+            )
 
-            total_raw_material_cost += material_cost
+        with col4:
+            rate = st.number_input(
+                f"Rate per {unit} (₹)",
+                min_value=0.0,
+                key=f"rate_{i}"
+            )
+
+        material_cost = quantity * rate
+
+        materials.append({
+            "Material": material_name,
+            "Quantity": quantity,
+            "Unit": unit,
+            "Rate": rate,
+            "Cost": material_cost
+        })
+
+        total_raw_material_cost += material_cost
 
     # ================= MATERIAL TABLE =================
 
-            st.subheader("📋 Material Cost Sheet")
+    st.subheader("📋 Material Cost Sheet")
 
-            material_df = pd.DataFrame(materials)
+    material_df = pd.DataFrame(materials)
 
-            st.dataframe(
-                material_df,
-                use_container_width=True
-            )
-
-            st.metric(
-                " Total Raw Material Cost",
-                f"₹ {total_raw_material_cost:,.2f}"
+    st.dataframe(
+        material_df,
+        use_container_width=True
     )
-            # ================= MANUFACTURING COST =================
 
-        st.subheader("🏭 Manufacturing Expenses")
+    st.metric(
+        "💰 Total Raw Material Cost",
+        f"₹ {total_raw_material_cost:,.2f}"
+    )
 
-        c1, c2 = st.columns(2)
+    # ================= MANUFACTURING EXPENSES =================
 
-        with c1:
-            labor = st.number_input("Labor Cost (₹)", min_value=0.0, key="labor")
-            machine = st.number_input("Machine Cost (₹)", min_value=0.0, key="machine")
-            electricity = st.number_input("Electricity Cost (₹)", min_value=0.0, key="electricity")
+    st.subheader("🏭 Manufacturing Expenses")
 
-        with c2:
-            packaging = st.number_input("Packaging Cost (₹)", min_value=0.0, key="packaging")
-            transportation = st.number_input("Transportation Cost (₹)", min_value=0.0, key="transport")
-            other = st.number_input("Other Expenses (₹)", min_value=0.0, key="other")
+    c1, c2 = st.columns(2)
 
-        # ================= PRODUCTION =================
+    with c1:
+        labor = st.number_input("Labor Cost (₹)", min_value=0.0)
+        machine = st.number_input("Machine Cost (₹)", min_value=0.0)
+        electricity = st.number_input("Electricity Cost (₹)", min_value=0.0)
 
-        st.subheader("🏗️ Production Details")
+    with c2:
+        packaging = st.number_input("Packaging Cost (₹)", min_value=0.0)
+        transportation = st.number_input("Transportation Cost (₹)", min_value=0.0)
+        other = st.number_input("Other Expenses (₹)", min_value=0.0)
 
-        quantity_produced = st.number_input(
-            "Production Quantity",
-            min_value=1,
-            value=100,
-            key="qty_produced"
+    # ================= PRODUCTION =================
+
+    st.subheader("🏗️ Production Details")
+
+    quantity_produced = st.number_input(
+        "Production Quantity",
+        min_value=1,
+        value=100
+    )
+
+    # ================= PROFIT & GST =================
+
+    st.subheader("📈 Profit & GST")
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+        profit_margin = st.number_input(
+            "Profit Margin (%)",
+            min_value=0.0,
+            max_value=100.0,
+            value=20.0
         )
 
-        # ================= PROFIT SETTINGS =================
+    with c2:
+        gst = st.number_input(
+            "GST (%)",
+            min_value=0.0,
+            max_value=50.0,
+            value=18.0
+        )
 
-        st.subheader("📈 Profit & GST")
+    # ================= CALCULATE =================
 
-        c1, c2 = st.columns(2)
+    if st.button("🧮 Calculate Product Price", use_container_width=True):
 
-        with c1:
-            profit_margin = st.number_input(
-                "Profit Margin (%)",
-                min_value=0.0,
-                max_value=100.0,
-                value=20.0,
-                key="profit"
-            )
+        total_cost = (
+            total_raw_material_cost +
+            labor +
+            machine +
+            electricity +
+            packaging +
+            transportation +
+            other
+        )
 
-        with c2:
-            gst = st.number_input(
-                "GST (%)",
-                min_value=0.0,
-                max_value=50.0,
-                value=18.0,
-                key="gst"
-            )
+        cost_per_unit = total_cost / quantity_produced
 
-            # ================= CALCULATE =================
+        selling_price = cost_per_unit * (1 + profit_margin / 100)
 
-            if st.button("Calculate Product Price"):
+        final_price = selling_price * (1 + gst / 100)
 
-                total_cost = (
-                    total_raw_material_cost +
-                    labor +
-                    machine +
-                    electricity +
-                    packaging +
-                    transportation +
-                    other
-                )
+        profit_per_unit = selling_price - cost_per_unit
 
-                cost_per_unit = total_cost / quantity_produced
+        total_profit = profit_per_unit * quantity_produced
 
-                selling_price = (
-                    cost_per_unit *
-                    (1 + profit_margin / 100)
-                )
+        revenue = final_price * quantity_produced
 
-                final_price = (
-                    selling_price *
-                    (1 + gst / 100)
-                )
+        st.success("✅ Calculation Completed")
 
-                profit_per_unit = (
-                    final_price -
-                    cost_per_unit
-                )
+        # ================= SUMMARY =================
 
-                total_profit = (
-                    profit_per_unit *
-                    quantity_produced
-                )
+        st.subheader("📊 Business Summary")
 
-                revenue = (
-                    final_price *
-                    quantity_produced
-                )
+        col1, col2, col3, col4 = st.columns(4)
 
-                st.success("Calculation Completed")
+        col1.metric("Cost / Unit", f"₹ {cost_per_unit:,.2f}")
+        col2.metric("Selling Price", f"₹ {final_price:,.2f}")
+        col3.metric("Total Profit", f"₹ {total_profit:,.2f}")
+        col4.metric("Revenue", f"₹ {revenue:,.2f}")
 
-                # ================= DASHBOARD =================
+        # ================= REPORT =================
 
-                st.subheader("Business Summary")
+        st.subheader("📋 Manufacturing Report")
 
-                col1, col2, col3, col4 = st.columns(4)
+        report_df = pd.DataFrame({
+            "Field": [
+                "Product Name",
+                "Category",
+                "Production Quantity",
+                "Total Manufacturing Cost",
+                "Cost Per Unit",
+                "Selling Price Per Unit",
+                "Profit Per Unit",
+                "Total Profit",
+                "Revenue"
+            ],
+            "Value": [
+                product_name,
+                category,
+                quantity_produced,
+                f"₹ {total_cost:,.2f}",
+                f"₹ {cost_per_unit:,.2f}",
+                f"₹ {final_price:,.2f}",
+                f"₹ {profit_per_unit:,.2f}",
+                f"₹ {total_profit:,.2f}",
+                f"₹ {revenue:,.2f}"
+            ]
+        })
 
-                col1.metric(
-                    "Cost / Unit",
-                    f"₹ {cost_per_unit:,.2f}"
-                )
+        st.dataframe(
+            report_df,
+            use_container_width=True,
+            hide_index=True
+        )
 
-                col2.metric(
-                    "Selling Price",
-                    f"₹ {final_price:,.2f}"
-                )
+        # ================= SMART ANALYSIS =================
 
-                col3.metric(
-                    "Total Profit",
-                    f"₹ {total_profit:,.2f}"
-                )
+        profit_percent = (
+            (profit_per_unit / cost_per_unit) * 100
+            if cost_per_unit > 0 else 0
+        )
 
-                col4.metric(
-                    "Revenue",
-                    f"₹ {revenue:,.2f}"
-                )
+        st.subheader("🤖 Smart Analysis")
 
-                # ================= REPORT =================
+        if profit_percent < 15:
+            st.error("Low Profit Margin. Consider reducing costs.")
 
-                st.subheader("Manufacturing Report")
+        elif profit_percent < 30:
+            st.warning("Moderate Profit Margin.")
 
-                report_df = pd.DataFrame({
-                    "Field": [
-                        "Product Name",
-                        "Category",
-                        "Production Quantity",
-                        "Total Manufacturing Cost",
-                        "Cost Per Unit",
-                        "Selling Price Per Unit",
-                        "Profit Per Unit",
-                        "Total Profit",
-                        "Revenue"
-                    ],
-                    "Value": [
-                        product_name,
-                        category,
-                        quantity_produced,
-                        f"₹ {total_cost:,.2f}",
-                        f"₹ {cost_per_unit:,.2f}",
-                        f"₹ {final_price:,.2f}",
-                        f"₹ {profit_per_unit:,.2f}",
-                        f"₹ {total_profit:,.2f}",
-                        f"₹ {revenue:,.2f}"
-                    ]
-                })
+        else:
+            st.success("Excellent Profit Margin.")
 
-                st.dataframe(
-                    report_df,
-                    use_container_width=True,
-                    hide_index=True
-                )
+        # ================= DOWNLOAD REPORT =================
 
-                # ================= MATERIAL SHEET =================
+        csv = report_df.to_csv(index=False)
 
-                st.subheader("Material Cost Sheet")
-
-                material_df = pd.DataFrame(
-                    materials,
-                    columns=[
-                        "Material",
-                        "Quantity",
-                        "Rate",
-                        "Cost"
-                    ]
-                )
-
-                st.dataframe(
-                    material_df,
-                    use_container_width=True
-                )
-
-                # ================= SMART ANALYSIS =================
-
-                profit_percent = (
-                    (profit_per_unit / cost_per_unit) * 100
-                    if cost_per_unit > 0 else 0
-                )
-
-                st.subheader("🤖 Smart Analysis")
-
-                if profit_percent < 15:
-                    st.error(
-                        "Low Profit Margin. Consider reducing costs."
-                    )
-
-                elif profit_percent < 30:
-                    st.warning(
-                        "Moderate Profit Margin."
-                    )
-
-                else:
-                    st.success(
-                        "Excellent Profit Margin."
-                    )
-
-                # ================= DOWNLOAD REPORT =================
-
-                csv = report_df.to_csv(index=False)
-
-                st.download_button(
-                    "📥 Download Report",
-                    csv,
-                    file_name=f"{product_name}_report.csv",
-                    mime="text/csv"
-                )
-
-            
+        st.download_button(
+            "📥 Download Report",
+            data=csv,
+            file_name=f"{product_name}_report.csv",
+            mime="text/csv"
+        )
 # =========================================================
 # LOAN SYSTEM
 # =========================================================
