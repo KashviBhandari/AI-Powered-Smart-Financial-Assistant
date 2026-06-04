@@ -46,6 +46,10 @@ with col2:
     </div>
     """, unsafe_allow_html=True)
 
+# ================= AUTO REFRESH =================
+
+
+
 # ================= SIDEBAR =================
 
 st.markdown("""
@@ -1255,10 +1259,9 @@ elif menu == "Business Finance":
                     st.plotly_chart(fig2, use_container_width=True)
 
                     
+    elif option == "Manufacturing Calculator":
 
-   elif option == "Manufacturing Calculator":
-
-    st.title("🏭 Manufacturing Product Price Calculator")
+     st.title("🏭 Manufacturing Product Price Calculator")
 
     # ================= PRODUCT DETAILS =================
 
@@ -1509,6 +1512,8 @@ elif menu == "Business Finance":
             file_name=f"{product_name}_report.csv",
             mime="text/csv"
         )
+
+            
 # =========================================================
 # LOAN SYSTEM
 # =========================================================
@@ -1823,53 +1828,44 @@ elif menu == "Stock Market":
     st.title("📈 AI Stock Predictor Pro")
 
     # -------------------------------
-# SIDEBAR
-# -------------------------------
+    # SIDEBAR
+    # -------------------------------
+    st.sidebar.title("📊 Stock Dashboard")
+    st.sidebar.header("📥 Input Section")
 
-st.sidebar.title("📊 Stock Dashboard")
-st.sidebar.header("📥 Input Section")
+    stock_list = [
+        "AAPL",
+        "TSLA",
+        "MSFT",
+        "AMZN",
+        "GOOGL",
+        "META",
+        "RELIANCE.NS",
+        "TCS.NS",
+        "INFY.NS",
+        "HDFCBANK.NS",
+        "ICICIBANK.NS",
+        "BTC-USD",
+        "ETH-USD"
+    ]
 
-# Stock List
-stock_list = [
-    "AAPL",
-    "TSLA",
-    "MSFT",
-    "AMZN",
-    "GOOGL",
-    "META",
-    "RELIANCE.NS",
-    "TCS.NS",
-    "INFY.NS",
-    "HDFCBANK.NS",
-    "ICICIBANK.NS",
-    "BTC-USD",
-    "ETH-USD"
-]
+    stock_symbol = st.sidebar.selectbox(
+        "🔥 Select Stock",
+        stock_list
+    )
 
-# Selectbox with unique key
-stock_symbol = st.sidebar.selectbox(
-    "🔥 Select Stock",
-    stock_list,
-    key="stock_select_unique"
-)
+    refresh = st.sidebar.checkbox(
+        "🔄 Auto Refresh (40 sec)"
+    )
 
-# Checkbox with unique key
-refresh = st.sidebar.checkbox(
-    "🔄 Auto Refresh (40 sec)",
-    key="refresh_unique"
-)
+    if refresh:
+        time.sleep(40)
+        st.rerun()
 
-# Auto Refresh Logic
-if refresh:
-    time.sleep(40)
-    st.rerun()
-
-# Mode Selection
-mode = st.radio(
-    "Select Mode",
-    ["📡 Live Data"],
-    key="mode_unique"
-)
+    mode = st.radio(
+        "Select Mode",
+        ["📡 Live Data"]
+    )
 
     # -------------------------------
     # LIVE DATA
