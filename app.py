@@ -46,10 +46,6 @@ with col2:
     </div>
     """, unsafe_allow_html=True)
 
-# ================= AUTO REFRESH =================
-
-
-
 # ================= SIDEBAR =================
 
 st.markdown("""
@@ -1897,44 +1893,53 @@ elif menu == "Stock Market":
     st.title("📈 AI Stock Predictor Pro")
 
     # -------------------------------
-    # SIDEBAR
-    # -------------------------------
-    st.sidebar.title("📊 Stock Dashboard")
-    st.sidebar.header("📥 Input Section")
+# SIDEBAR
+# -------------------------------
 
-    stock_list = [
-        "AAPL",
-        "TSLA",
-        "MSFT",
-        "AMZN",
-        "GOOGL",
-        "META",
-        "RELIANCE.NS",
-        "TCS.NS",
-        "INFY.NS",
-        "HDFCBANK.NS",
-        "ICICIBANK.NS",
-        "BTC-USD",
-        "ETH-USD"
-    ]
+st.sidebar.title("📊 Stock Dashboard")
+st.sidebar.header("📥 Input Section")
 
-    stock_symbol = st.sidebar.selectbox(
-        "🔥 Select Stock",
-        stock_list
-    )
+# Stock List
+stock_list = [
+    "AAPL",
+    "TSLA",
+    "MSFT",
+    "AMZN",
+    "GOOGL",
+    "META",
+    "RELIANCE.NS",
+    "TCS.NS",
+    "INFY.NS",
+    "HDFCBANK.NS",
+    "ICICIBANK.NS",
+    "BTC-USD",
+    "ETH-USD"
+]
 
-    refresh = st.sidebar.checkbox(
-        "🔄 Auto Refresh (40 sec)"
-    )
+# Selectbox with unique key
+stock_symbol = st.sidebar.selectbox(
+    "🔥 Select Stock",
+    stock_list,
+    key="stock_select_unique"
+)
 
-    if refresh:
-        time.sleep(40)
-        st.rerun()
+# Checkbox with unique key
+refresh = st.sidebar.checkbox(
+    "🔄 Auto Refresh (40 sec)",
+    key="refresh_unique"
+)
 
-    mode = st.radio(
-        "Select Mode",
-        ["📡 Live Data"]
-    )
+# Auto Refresh Logic
+if refresh:
+    time.sleep(40)
+    st.rerun()
+
+# Mode Selection
+mode = st.radio(
+    "Select Mode",
+    ["📡 Live Data"],
+    key="mode_unique"
+)
 
     # -------------------------------
     # LIVE DATA
