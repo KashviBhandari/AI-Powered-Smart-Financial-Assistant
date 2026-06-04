@@ -1148,8 +1148,15 @@ elif menu == "Business Finance":
                 c1, c2, c3 = st.columns(3)
 
                 with c1:
-                    date = st.date_input("Date")
-                    product = st.text_input("Product Name")
+                    date = st.date_input(
+                        "Date",
+                        key="retail_date"
+                    )
+
+                    product = st.text_input(
+                        "Product Name",
+                        key="retail_product"
+                    )
 
                 with c2:
                     category = st.selectbox(
