@@ -1296,62 +1296,62 @@ elif menu == "Business Finance":
 
     # ================= RAW MATERIALS =================
 
-    st.subheader("📦 Raw Materials")
-
-    num_materials = st.number_input(
-        "Number of Materials",
-        min_value=1,
-        max_value=20,
-        value=3
-    )
-
-    materials = []
-    total_raw_material_cost = 0
-
-    for i in range(int(num_materials)):
-
-        st.markdown(f"### Material {i+1}")
-
-        col1, col2, col3, col4 = st.columns(4)
-
-        with col1:
-            material_name = st.text_input(
-                "Material Name",
-                key=f"material_{i}"
-            )
-
-        with col2:
-            quantity = st.number_input(
-                "Quantity",
-                min_value=0.0,
-                key=f"qty_{i}"
-            )
-
-        with col3:
-            unit = st.selectbox(
-                "Unit",
-                ["Kg", "Gram", "Litre", "ML", "Piece", "Meter", "Pack"],
-                key=f"unit_{i}"
-            )
-
-        with col4:
-            rate = st.number_input(
-                f"Rate per {unit} (₹)",
-                min_value=0.0,
-                key=f"rate_{i}"
-            )
-
-        material_cost = quantity * rate
-
-        materials.append({
-            "Material": material_name,
-            "Quantity": quantity,
-            "Unit": unit,
-            "Rate": rate,
-            "Cost": material_cost
-        })
-
-        total_raw_material_cost += material_cost
+        st.subheader("📦 Raw Materials")
+    
+        num_materials = st.number_input(
+            "Number of Materials",
+            min_value=1,
+            max_value=20,
+            value=3
+        )
+    
+        materials = []
+        total_raw_material_cost = 0
+    
+        for i in range(int(num_materials)):
+    
+            st.markdown(f"### Material {i+1}")
+    
+            col1, col2, col3, col4 = st.columns(4)
+    
+            with col1:
+                material_name = st.text_input(
+                    "Material Name",
+                    key=f"material_{i}"
+                )
+    
+            with col2:
+                quantity = st.number_input(
+                    "Quantity",
+                    min_value=0.0,
+                    key=f"qty_{i}"
+                )
+    
+            with col3:
+                unit = st.selectbox(
+                    "Unit",
+                    ["Kg", "Gram", "Litre", "ML", "Piece", "Meter", "Pack"],
+                    key=f"unit_{i}"
+                )
+    
+            with col4:
+                rate = st.number_input(
+                    f"Rate per {unit} (₹)",
+                    min_value=0.0,
+                    key=f"rate_{i}"
+                )
+    
+            material_cost = quantity * rate
+    
+            materials.append({
+                "Material": material_name,
+                "Quantity": quantity,
+                "Unit": unit,
+                "Rate": rate,
+                "Cost": material_cost
+            })
+    
+            total_raw_material_cost += material_cost
 
     # ================= MATERIAL TABLE =================
 
