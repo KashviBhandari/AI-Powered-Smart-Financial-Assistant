@@ -46,10 +46,6 @@ with col2:
     </div>
     """, unsafe_allow_html=True)
 
-# ================= AUTO REFRESH =================
-
-
-
 # ================= SIDEBAR =================
 
 st.markdown("""
@@ -64,6 +60,32 @@ st.markdown("""
 h1,h2,h3,h4,h5,h6{
     color:#FFFFFF !important;
 }
+/* ==========================================
+   FIX keyboard_double_arrow_right TEXT
+========================================== */
+
+/* Hide sidebar collapse control */
+[data-testid="collapsedControl"]{
+    display:none !important;
+}
+
+/* Hide sidebar collapse button */
+[data-testid="stSidebarCollapseButton"]{
+    display:none !important;
+}
+
+/* Hide Material Icon names */
+.material-icons,
+.material-symbols-rounded,
+.material-symbols-outlined{
+    font-size:0 !important;
+}
+
+/* Hide header button text */
+button[kind="header"] span{
+    display:none !important;
+}
+
 /* Text */
 p,span,label,div{
     color:#FFFFFF;
@@ -484,6 +506,27 @@ div[data-baseweb="menu"]{
 div[data-baseweb="menu"] *{
     background:#14191D !important;
     color:white !important;
+}
+* ==========================================
+   FIX keyboard_double_arrow_right TEXT
+========================================== */
+
+[data-testid="collapsedControl"]{
+    display:none !important;
+}
+
+[data-testid="stSidebarCollapseButton"]{
+    display:none !important;
+}
+
+.material-icons,
+.material-symbols-rounded,
+.material-symbols-outlined{
+    font-size:0 !important;
+}
+
+button[kind="header"] span{
+    display:none !important;
 }
 
 
