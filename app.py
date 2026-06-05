@@ -2637,22 +2637,19 @@ elif menu == "Reports":
     # =========================
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM personal_finance")
+
+    cursor.execute("""
+    SELECT id, salary, expense, savings
+    FROM finance_data
+    WHERE user_id = %s
+    """, (st.session_state.user_id,))
+
     data = cursor.fetchall()
 
     df = pd.DataFrame(
         data,
-        columns=[
-            "ID",
-            "Income",
-            "Expense",
-            "Savings",
-            "EMI",
-            "Health",
-            "Prediction"
-        ]
+        columns=["ID", "Income", "Expense", "Savings"]
     )
-
     # =========================
     # EMPTY STATE
     # =========================
@@ -2724,18 +2721,13 @@ elif menu == "Reports":
 
     selected_id = st.selectbox("Select Record ID", df["ID"])
 
-    col1, col2 = st.columns(2)
-
-    with col1:
-        delete_one = st.button("Delete Selected ❌")
-
-    if delete_one:
+    if st.button("Delete Selected ❌"):
         cursor.execute(
-            "DELETE FROM personal_finance WHERE id=%s",
-            (int(selected_id),)
+            "DELETE FROM finance_data WHERE id=%s AND user_id=%s",
+            (int(selected_id), st.session_state.user_id)
         )
         conn.commit()
-        st.success(f"Record ID {selected_id} deleted successfully")
+        st.success("Record deleted successfully")
         st.rerun()
 
     # =========================
@@ -2752,11 +2744,14 @@ elif menu == "Reports":
     if confirm:
         if st.button("🗑 Delete All Records", type="primary"):
 
-            cursor.execute("DELETE FROM personal_finance")
+            cursor.execute("DELETE FROM finance_data WHERE user_id=%s", (st.session_state.user_id,))
             conn.commit()
 
             st.success("All records deleted successfully")
             st.rerun()
+#========================================================
+#fingen bot
+#========================================================
 elif menu == "🤖 FinGen Bot":
 
     from chatbot import ai_chat
