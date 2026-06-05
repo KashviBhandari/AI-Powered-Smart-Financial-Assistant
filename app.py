@@ -685,36 +685,17 @@ if not st.session_state.logged_in:
 
     menu = st.selectbox("Select", ["Login", "Register"])
 
-if menu == "Register":
+    if menu == "Register":
 
-    username = st.text_input("Username")
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
 
-    password = st.text_input(
-        "Password",
-        type="password"
-    )
-
-    confirm_password = st.text_input(
-        "Re-enter Password",
-        type="password"
-    )
-
-    if st.button("Register"):
-
-        if password != confirm_password:
-            st.error("❌ Passwords do not match")
-
-        elif username.strip() == "":
-            st.error("❌ Please enter username")
-
-        elif password.strip() == "":
-            st.error("❌ Please enter password")
-
-        else:
+        if st.button("Register"):
             if register_user(username, password):
-                st.success("✅ Registration Successful")
+                st.success("Registration Successful")
             else:
-                st.error("❌ Username already exists")
+                st.error("Username already exists")
+
     else:
 
         username = st.text_input("Username")
@@ -1517,7 +1498,7 @@ elif menu == "Business Finance":
 
             with c4:
                 rate = st.number_input(
-                    f"Rate per {unit} (₹)",
+                    f"Rate per ({unit})(₹)",
                     min_value=0.0,
                     key=f"rate_{i}"
                 )
