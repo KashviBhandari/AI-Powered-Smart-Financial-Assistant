@@ -580,8 +580,39 @@ def create_tables():
     conn.commit()
     conn.close()
 
-# ================= REGISTER =================
-def register_user(username, password):
+    # ================= REGISTER =================
+    def register_user(username, password):
+
+        username = username.strip()
+        password = password.strip()
+
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "SELECT id FROM users WHERE username=%s",
+            (username,)
+        )
+
+        if cursor.fetchone():
+            conn.close()
+            return False
+
+        hashed_password = hashlib.sha256(
+            password.encode()
+        ).hexdigest()
+
+        cursor.execute(
+            "INSERT INTO users(username,password) VALUES(%s,%s)",
+            (username, hashed_password)
+        )
+
+        conn.commit()
+        conn.close()
+
+        return True
+    # ================= LOGIN =================
+def login_user(username, password):
 
     username = username.strip()
     password = password.strip()
@@ -589,163 +620,161 @@ def register_user(username, password):
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute(
-        "SELECT id FROM users WHERE username=%s",
-        (username,)
-    )
-
-    if cursor.fetchone():
-        conn.close()
-        return False
-
     hashed_password = hashlib.sha256(
         password.encode()
     ).hexdigest()
 
     cursor.execute(
-        "INSERT INTO users(username,password) VALUES(%s,%s)",
+        """
+        SELECT id, username
+        FROM users
+        WHERE username=%s
+        AND password=%s
+        """,
         (username, hashed_password)
     )
 
-    conn.commit()
+    user = cursor.fetchone()
+
+    cursor.close()
     conn.close()
 
-    return True
+    return user
 
-create_tables()
+    create_tables()
 
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
+    if "logged_in" not in st.session_state:
+        st.session_state.logged_in = False
 
-if "username" not in st.session_state:
-    st.session_state.username = ""
+    if "username" not in st.session_state:
+        st.session_state.username = ""
 
-if "user_id" not in st.session_state:
-    st.session_state.user_id = None
+    if "user_id" not in st.session_state:
+        st.session_state.user_id = None
 
 
-# ================= LOGIN PAGE =================
-if not st.session_state.logged_in:
+    # ================= LOGIN PAGE =================
+    if not st.session_state.logged_in:
 
-    st.title("User Login / Register")
+        st.title("User Login / Register")
 
-    menu = st.selectbox(
-        "Select",
-        ["Login", "Register"]
+        menu = st.selectbox(
+            "Select",
+            ["Login", "Register"]
+        )
+
+        if menu == "Register":
+
+            username = st.text_input(
+                "Username",
+                key="reg_username"
+            )
+
+            password = st.text_input(
+                "Password",
+                type="password",
+                key="reg_password"
+            )
+
+            confirm_password = st.text_input(
+                "Re-enter Password",
+                type="password",
+                key="reg_confirm_password"
+            )
+
+            if st.button("Register"):
+
+                if password != confirm_password:
+                    st.error("Passwords do not match")
+
+                elif register_user(username, password):
+                    st.success("Registration Successful")
+
+                else:
+                    st.error("Username already exists")
+
+        else:
+
+            username = st.text_input(
+                "Username",
+                key="login_username"
+            )
+
+            password = st.text_input(
+                "Password",
+                type="password",
+                key="login_password"
+            )
+
+            if st.button("Login"):
+
+                user = login_user(username, password)
+
+                if user:
+                    st.session_state.logged_in = True
+                    st.session_state.user_id = user[0]
+                    st.session_state.username = user[1]
+                    st.rerun()
+
+                else:
+                    st.error("Invalid Login")
+
+        st.stop()
+
+
+    # ================= DASHBOARD =================
+
+    st.title(
+        f"Welcome {st.session_state.username}"
     )
 
-    if menu == "Register":
+    menu = st.sidebar.radio(
+        "📌 Navigation",
+        [
+            "Live Market",
+            "🤖 FinGen Bot",
+            "Personal Finance",
+            "Business Finance",
+            "Loan System",
+            "Risk Analyzer",
+            "Stock Market",
+            "Investment Planner",
+            "Reports",
+            "summary"
+        ]
+    )
 
-        username = st.text_input(
-            "Username",
-            key="reg_username"
-        )
+    if st.sidebar.button("Logout"):
+        st.session_state.clear()
+        st.rerun()
+    # =========================================================
+    # Live Market
+    # =========================================================
 
-        password = st.text_input(
-            "Password",
-            type="password",
-            key="reg_password"
-        )
+    if menu == "Live Market":
 
-        confirm_password = st.text_input(
-            "Re-enter Password",
-            type="password",
-            key="reg_confirm_password"
-        )
+        st.title("🇮🇳 Indian Live Market Dashboard")
+        
 
-        if st.button("Register"):
+        # ================= CACHE DATA =================
 
-            if password != confirm_password:
-                st.error("Passwords do not match")
+        @st.cache_data(ttl=300)
+        def get_market_data():
 
-            elif register_user(username, password):
-                st.success("Registration Successful")
+            def safe_get(ticker):
+                try:
+                    data = yf.Ticker(ticker).history(period="1d")
+                    return data["Close"].iloc[-1] if not data.empty else None
+                except:
+                    return None
 
-            else:
-                st.error("Username already exists")
-
-    else:
-
-        username = st.text_input(
-            "Username",
-            key="login_username"
-        )
-
-        password = st.text_input(
-            "Password",
-            type="password",
-            key="login_password"
-        )
-
-        if st.button("Login"):
-
-            user = login_user(username, password)
-
-            if user:
-                st.session_state.logged_in = True
-                st.session_state.user_id = user[0]
-                st.session_state.username = user[1]
-                st.rerun()
-
-            else:
-                st.error("Invalid Login")
-
-    st.stop()
-
-
-# ================= DASHBOARD =================
-
-st.title(
-    f"Welcome {st.session_state.username}"
-)
-
-menu = st.sidebar.radio(
-    "📌 Navigation",
-    [
-        "Live Market",
-        "🤖 FinGen Bot",
-        "Personal Finance",
-        "Business Finance",
-        "Loan System",
-        "Risk Analyzer",
-        "Stock Market",
-        "Investment Planner",
-        "Reports",
-        "summary"
-    ]
-)
-
-if st.sidebar.button("Logout"):
-    st.session_state.clear()
-    st.rerun()
-# =========================================================
-# Live Market
-# =========================================================
-
-if menu == "Live Market":
-
-    st.title("🇮🇳 Indian Live Market Dashboard")
-    
-
-    # ================= CACHE DATA =================
-
-    @st.cache_data(ttl=300)
-    def get_market_data():
-
-        def safe_get(ticker):
-            try:
-                data = yf.Ticker(ticker).history(period="1d")
-                return data["Close"].iloc[-1] if not data.empty else None
-            except:
-                return None
-
-        return {
-            "gold": safe_get("GC=F"),
-            "silver": safe_get("SI=F"),
-            "usd_inr": safe_get("INR=X"),
-            "sensex": safe_get("^BSESN"),
-            "nifty": safe_get("^NSEI"),
-        }
+            return {
+                "gold": safe_get("GC=F"),
+                "silver": safe_get("SI=F"),
+                "usd_inr": safe_get("INR=X"),
+                "sensex": safe_get("^BSESN"),
+                "nifty": safe_get("^NSEI"),
+            }
 
     # ================= LOAD DATA =================
 
