@@ -656,71 +656,83 @@ if "user_id" not in st.session_state:
     # ================= LOGIN PAGE =================
 if not st.session_state.logged_in:
 
-        st.title("User Login / Register")
+    st.title("User Login / Register")
 
-        menu = st.selectbox(
-            "Select",
-            ["Login", "Register"]
+    menu = st.selectbox(
+        "Select",
+        ["Login", "Register"]
+    )
+
+    # ================= REGISTER =================
+    if menu == "Register":
+
+        username = st.text_input(
+            "Username",
+            key="reg_username"
         )
 
-        if menu == "Register":
+        password = st.text_input(
+            "Password",
+            type="password",
+            key="reg_password"
+        )
 
-            username = st.text_input(
-                "Username",
-                key="reg_username"
+        confirm_password = st.text_input(
+            "Re-enter Password",
+            type="password",
+            key="reg_confirm_password"
+        )
+
+        if st.button(
+            "Register",
+            key="register_btn"
+        ):
+
+            if password != confirm_password:
+                st.error("❌ Passwords do not match")
+
+            elif register_user(username, password):
+                st.success("✅ Registration Successful")
+
+            else:
+                st.error("❌ Username already exists")
+
+    # ================= LOGIN =================
+    else:
+
+        username = st.text_input(
+            "Username",
+            key="login_username"
+        )
+
+        password = st.text_input(
+            "Password",
+            type="password",
+            key="login_password"
+        )
+
+        if st.button(
+            "Login",
+            key="login_btn"
+        ):
+
+            user = login_user(
+                username,
+                password
             )
 
-            password = st.text_input(
-                "Password",
-                type="password",
-                key="reg_password"
-            )
+            if user:
 
-            confirm_password = st.text_input(
-                "Re-enter Password",
-                type="password",
-                key="reg_confirm_password"
-            )
+                st.session_state.logged_in = True
+                st.session_state.user_id = user[0]
+                st.session_state.username = user[1]
 
-        if st.button("Register"):
+                st.rerun()
 
-                    if password != confirm_password:
-                        st.error("Passwords do not match")
+            else:
+                st.error("❌ Invalid Login")
 
-                    elif register_user(username, password):
-                        st.success("Registration Successful")
-
-                    else:
-                        st.error("Username already exists")
-
-        else:
-
-            username = st.text_input(
-                "Username",
-                key="login_username"
-            )
-
-            password = st.text_input(
-                "Password",
-                type="password",
-                key="login_password"
-            )
-
-            if st.button("Login"):
-
-                user = login_user(username, password)
-
-                if user:
-                    st.session_state.logged_in = True
-                    st.session_state.user_id = user[0]
-                    st.session_state.username = user[1]
-                    st.rerun()
-
-                else:
-                    st.error("Invalid Login")
-
-        st.stop()
-
+    st.stop()
 
     # ================= DASHBOARD =================
 
