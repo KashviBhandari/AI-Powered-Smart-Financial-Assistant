@@ -685,7 +685,7 @@ if not st.session_state.logged_in:
 
     menu = st.selectbox("Select", ["Login", "Register"])
 
-    if menu == "Register":
+if menu == "Register":
 
     username = st.text_input("Username")
 
