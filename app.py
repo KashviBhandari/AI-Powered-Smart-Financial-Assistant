@@ -582,217 +582,124 @@ def create_tables():
 
 # ================= REGISTER =================
 
-def register_user(username, password):
-
-    username = username.strip()
-    password = password.strip()
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT id FROM users WHERE username=%s", (username,))
-
-    if cursor.fetchone():
-        conn.close()
-        return False
-
-    hashed_password = hashlib.sha256(password.encode()).hexdigest()
-
-    cursor.execute(
-        "INSERT INTO users(username,password) VALUES(%s,%s)",
-        (username, hashed_password)
-    )
-
-    conn.commit()
-    conn.close()
-
-    return True
-# ================= LOGIN =================
-def login_user(username, password):
-
-    username = username.strip()
-    password = password.strip()
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    hashed_password = hashlib.sha256(password.encode()).hexdigest()
-
-    cursor.execute("""
-        SELECT id,username
-        FROM users
-        WHERE username=%s AND password=%s
-    """, (username, hashed_password))
-
-    user = cursor.fetchone()
-
-    conn.close()
-    return user
-
-# ================= SAVE DATA =================
-def save_finance_data(user_id, salary, expense):
-
-    savings = salary - expense
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-    INSERT INTO finance_data
-    (user_id,salary,expense,savings)
-    VALUES(%s,%s,%s,%s)
-    """,
-    (
-        user_id,
-        salary,
-        expense,
-        savings
-    ))
-
-    conn.commit()
-    conn.close()
-
-# ================= LOAD DATA =================
-def load_user_data(user_id):
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-    SELECT salary,expense,savings
-    FROM finance_data
-    WHERE user_id=%s
-    """,
-    (user_id,)
-    )
-
-    data = cursor.fetchall()
-
-    conn.close()
-
-    return data
-
 # ================= MAIN =================
+
 create_tables()
 
 if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
+st.session_state.logged_in = False
 
-# ================= LOGIN PAGE =================
+# ================= LOGIN / REGISTER =================
+
 if not st.session_state.logged_in:
 
-    st.title("User Login / Register")
+```
+st.title("User Login / Register")
 
-    menu = st.selectbox("Select", ["Login", "Register"])
+menu = st.selectbox(
+    "Select",
+    ["Login", "Register"]
+)
 
+# ================= REGISTER =================
 if menu == "Register":
 
-    username = st.text_input("Username")
+    username = st.text_input(
+        "Username",
+        key="reg_username"
+    )
 
     password = st.text_input(
         "Password",
-        type="password"
+        type="password",
+        key="reg_password"
     )
 
     confirm_password = st.text_input(
         "Re-enter Password",
-        type="password"
+        type="password",
+        key="reg_confirm_password"
     )
 
-    if st.button("Register"):
+    if st.button(
+        "Register",
+        key="register_btn"
+    ):
 
         if password != confirm_password:
-            st.error("Passwords do not match")
+            st.error("❌ Passwords do not match")
+
+        elif register_user(username, password):
+            st.success("✅ Registration Successful")
 
         else:
-            if register_user(username, password):
-                st.success("Registration Successful")
-            else:
-                st.error("Username already exists")
+            st.error("❌ Username already exists")
 
+# ================= LOGIN =================
 else:
 
-    username = st.text_input("Username")
+    username = st.text_input(
+        "Username",
+        key="login_username"
+    )
 
     password = st.text_input(
         "Password",
-        type="password"
+        type="password",
+        key="login_password"
     )
 
-    if st.button("Login"):
+    if st.button(
+        "Login",
+        key="login_btn"
+    ):
 
-        user = login_user(username, password)
+        user = login_user(
+            username,
+            password
+        )
 
         if user:
+
             st.session_state.logged_in = True
             st.session_state.user_id = user[0]
             st.session_state.username = user[1]
+
             st.rerun()
 
         else:
-            st.error("Invalid Login")
-    else:
-
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-
-        if st.button("Login"):
-            user = login_user(username, password)
-
-            if user:
-                st.session_state.logged_in = True
-                st.session_state.user_id = user[0]
-                st.session_state.username = user[1]
-                st.rerun()
-            else:
-                st.error("Invalid Login")
+            st.error("❌ Invalid Login")
+```
 
 # ================= DASHBOARD =================
-        else:
 
-            st.title(f"Welcome {st.session_state.username}")
+else:
 
-    # ✅ SIDEBAR ONLY HERE (IMPORTANT FIX)
-    menu = st.sidebar.radio(
-        "📌 Navigation",
-        [
-            "Live Market",
-            "🤖 FinGen Bot",
-            "Personal Finance",
-            "Business Finance",
-            "Loan System",
-            "Risk Analyzer",
-            "Stock Market",
-            "Investment Planner",
-            "Reports",
-            "summary"
-        ]
-    )
+```
+st.title(
+    f"Welcome {st.session_state.username}"
+)
 
-    if st.button("Logout"):
-        st.session_state.clear()
-        st.rerun()
+menu = st.sidebar.radio(
+    "📌 Navigation",
+    [
+        "Live Market",
+        "🤖 FinGen Bot",
+        "Personal Finance",
+        "Business Finance",
+        "Loan System",
+        "Risk Analyzer",
+        "Stock Market",
+        "Investment Planner",
+        "Reports",
+        "summary"
+    ]
+)
 
-# =========================================================
-# FOOTER
-# =========================================================
+if st.sidebar.button("Logout"):
 
-st.sidebar.markdown("""
-<br><br>
-
-<div style="
-text-align:center;
-color:#7E8A97;
-font-size:12px;
-padding-bottom:10px;
-">
-
-⚡ Powered by AI <br>
-FinGen AI © 2026
-
-</div>
-""", unsafe_allow_html=True)
-
+    st.session_state.clear()
+    st.rerun()
 
 # =========================================================
 # Live Market
