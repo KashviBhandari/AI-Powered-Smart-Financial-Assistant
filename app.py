@@ -1498,7 +1498,7 @@ elif menu == "Business Finance":
 
             with c4:
                 rate = st.number_input(
-                    "Rate",
+                    f"Rate(per {unit})",
                     min_value=0.0,
                     key=f"rate_{i}"
                 )
