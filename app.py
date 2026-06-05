@@ -582,98 +582,89 @@ def create_tables():
 
 # ================= REGISTER =================
 
-# ================= MAIN =================
-
 create_tables()
 
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# ================= LOGIN / REGISTER =================
+if "username" not in st.session_state:
+    st.session_state.username = ""
 
+if "user_id" not in st.session_state:
+    st.session_state.user_id = None
+
+
+# ================= LOGIN PAGE =================
 if not st.session_state.logged_in:
+
     st.title("User Login / Register")
 
-menu = st.selectbox(
-    "Select",
-    ["Login", "Register"]
-)
-
-# ================= REGISTER =================
-if menu == "Register":
-
-    username = st.text_input(
-        "Username",
-        key="reg_username"
+    menu = st.selectbox(
+        "Select",
+        ["Login", "Register"]
     )
 
-    password = st.text_input(
-        "Password",
-        type="password",
-        key="reg_password"
-    )
+    if menu == "Register":
 
-    confirm_password = st.text_input(
-        "Re-enter Password",
-        type="password",
-        key="reg_confirm_password"
-    )
-
-    if st.button(
-        "Register",
-        key="register_btn"
-    ):
-
-        if password != confirm_password:
-            st.error("❌ Passwords do not match")
-
-        elif register_user(username, password):
-            st.success("✅ Registration Successful")
-
-        else:
-            st.error("❌ Username already exists")
-
-# ================= LOGIN =================
-else:
-
-    username = st.text_input(
-        "Username",
-        key="login_username"
-    )
-
-    password = st.text_input(
-        "Password",
-        type="password",
-        key="login_password"
-    )
-
-    if st.button(
-        "Login",
-        key="login_btn"
-    ):
-
-        user = login_user(
-            username,
-            password
+        username = st.text_input(
+            "Username",
+            key="reg_username"
         )
 
-        if user:
+        password = st.text_input(
+            "Password",
+            type="password",
+            key="reg_password"
+        )
 
-            st.session_state.logged_in = True
-            st.session_state.user_id = user[0]
-            st.session_state.username = user[1]
+        confirm_password = st.text_input(
+            "Re-enter Password",
+            type="password",
+            key="reg_confirm_password"
+        )
 
-            st.rerun()
+        if st.button("Register"):
 
-        else:
-            st.error("❌ Invalid Login")
-```
+            if password != confirm_password:
+                st.error("Passwords do not match")
+
+            elif register_user(username, password):
+                st.success("Registration Successful")
+
+            else:
+                st.error("Username already exists")
+
+    else:
+
+        username = st.text_input(
+            "Username",
+            key="login_username"
+        )
+
+        password = st.text_input(
+            "Password",
+            type="password",
+            key="login_password"
+        )
+
+        if st.button("Login"):
+
+            user = login_user(username, password)
+
+            if user:
+                st.session_state.logged_in = True
+                st.session_state.user_id = user[0]
+                st.session_state.username = user[1]
+                st.rerun()
+
+            else:
+                st.error("Invalid Login")
+
+    st.stop()
+
 
 # ================= DASHBOARD =================
 
-else:
-
-```
 st.title(
     f"Welcome {st.session_state.username}"
 )
@@ -695,10 +686,8 @@ menu = st.sidebar.radio(
 )
 
 if st.sidebar.button("Logout"):
-
     st.session_state.clear()
     st.rerun()
-
 # =========================================================
 # Live Market
 # =========================================================
