@@ -1005,17 +1005,22 @@ elif menu == "Personal Finance":
             if conn and cursor:
 
                 query = """
-                INSERT INTO personal_finance
-                (income, total_expense, savings, emi, financial_health, prediction)
-                VALUES (%s,%s,%s,%s,%s,%s)
-                """
-
-                values = (Income, total_expense, savings, emi, health, 0)
-
-                cursor.execute(query, values)
-                conn.commit()
-
-                st.success("✅ Data Saved Successfully")
+                        INSERT INTO finance_data
+                        (user_id, salary, expense, savings)
+                        VALUES (%s, %s, %s, %s)
+                        """
+                        
+                        values = (
+                            st.session_state.user_id,   # 👈 YE ADD KARNA ZARURI HAI
+                            Income,
+                            total_expense,
+                            savings
+                        )
+                        
+                        cursor.execute(query, values)
+                        conn.commit()
+                        
+                        st.success("✅ Data Saved Successfully")
 
     # =====================================================
     # BUDGET PLANNER
