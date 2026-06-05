@@ -581,6 +581,36 @@ def create_tables():
     conn.close()
 
 # ================= REGISTER =================
+def register_user(username, password):
+
+    username = username.strip()
+    password = password.strip()
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT id FROM users WHERE username=%s",
+        (username,)
+    )
+
+    if cursor.fetchone():
+        conn.close()
+        return False
+
+    hashed_password = hashlib.sha256(
+        password.encode()
+    ).hexdigest()
+
+    cursor.execute(
+        "INSERT INTO users(username,password) VALUES(%s,%s)",
+        (username, hashed_password)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return True
 
 create_tables()
 
