@@ -12,6 +12,7 @@ import time
 from groq import Groq
 from dotenv import load_dotenv
 import os
+import hashlib
 
 
 
@@ -529,7 +530,6 @@ button[kind="header"] span{
     display:none !important;
 }
 
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -541,108 +541,202 @@ st.sidebar.markdown("""
 
 <div class="glow-line"></div>
 """, unsafe_allow_html=True)
+ 
+# ================= DATABASE CONNECTION =================
+def get_connection():
+    return mysql.connector.connect(
+        host="yamanote.proxy.rlwy.net",
+        user="root",
+        password="ZYEzeINVRENjNtaFJvVhryiFwzwhOXLG",
+        database="railway",
+        port=28669
+    
+    )
 
+# ================= CREATE TABLES =================
+def create_tables():
+    conn = get_connection()
+    cursor = conn.cursor()
 
-#=========================================================
-# MYSQL CONNECTION
-# =========================================================
-conn = mysql.connector.connect(
-    host="yamanote.proxy.rlwy.net",          # Railway host or public URL
-    user="root",
-    password="ZYEzeINVRENjNtaFJvVhryiFwzwhOXLG",
-    database="railway",
-    port=28669
-)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users(
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(100) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL
+    )
+    """)
 
-cursor = conn.cursor()
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS personal_finance(
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    Income FLOAT,
-    total_expense FLOAT,
-    savings FLOAT,
-    emi FLOAT,
-    financial_health VARCHAR(100),
-    prediction FLOAT
-)
-""")
-conn.commit()
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS finance_data(
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT,
+        salary FLOAT,
+        expense FLOAT,
+        savings FLOAT,
+        FOREIGN KEY(user_id) REFERENCES users(id)
+    )
+    """)
 
-# =========================================================
-# SESSION STATE
-# =========================================================
+    conn.commit()
+    conn.close()
+
+# ================= REGISTER =================
+
+def register_user(username, password):
+
+    username = username.strip()
+    password = password.strip()
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id FROM users WHERE username=%s", (username,))
+
+    if cursor.fetchone():
+        conn.close()
+        return False
+
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+    cursor.execute(
+        "INSERT INTO users(username,password) VALUES(%s,%s)",
+        (username, hashed_password)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return True
+# ================= LOGIN =================
+def login_user(username, password):
+
+    username = username.strip()
+    password = password.strip()
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+    cursor.execute("""
+        SELECT id,username
+        FROM users
+        WHERE username=%s AND password=%s
+    """, (username, hashed_password))
+
+    user = cursor.fetchone()
+
+    conn.close()
+    return user
+
+# ================= SAVE DATA =================
+def save_finance_data(user_id, salary, expense):
+
+    savings = salary - expense
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    INSERT INTO finance_data
+    (user_id,salary,expense,savings)
+    VALUES(%s,%s,%s,%s)
+    """,
+    (
+        user_id,
+        salary,
+        expense,
+        savings
+    ))
+
+    conn.commit()
+    conn.close()
+
+# ================= LOAD DATA =================
+def load_user_data(user_id):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT salary,expense,savings
+    FROM finance_data
+    WHERE user_id=%s
+    """,
+    (user_id,)
+    )
+
+    data = cursor.fetchall()
+
+    conn.close()
+
+    return data
+
+# ================= MAIN =================
+create_tables()
+
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# =========================================================
-# LOGIN PAGE
-# =========================================================
-def login_page():
+# ================= LOGIN PAGE =================
+if not st.session_state.logged_in:
 
-    st.markdown("""
-    <div class="neo-card" style="text-align:center">
-        <h1> FinGen AI</h1>
-        <p>AI Powered Finance System</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.title("User Login / Register")
 
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
+    menu = st.selectbox("Select", ["Login", "Register"])
 
-    if st.button("Login"):
-        if username and password:
-            st.session_state.logged_in = True
-            st.session_state.user = username
-            st.rerun()
-        else:
-            st.error("Enter credentials")
+    if menu == "Register":
 
-# =========================================================
-# WELCOME PAGE
-# =========================================================
-def welcome_page():
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
 
-    st.markdown(f"""
-    <div class="neo-card" style="text-align:center">
-        <h1>👋 Welcome {st.session_state.user}</h1>
-        <p>AI Finance Assistant</p>
-    </div>
-    """, unsafe_allow_html=True)
+        if st.button("Register"):
+            if register_user(username, password):
+                st.success("Registration Successful")
+            else:
+                st.error("Username already exists")
+
+    else:
+
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+
+        if st.button("Login"):
+            user = login_user(username, password)
+
+            if user:
+                st.session_state.logged_in = True
+                st.session_state.user_id = user[0]
+                st.session_state.username = user[1]
+                st.rerun()
+            else:
+                st.error("Invalid Login")
+
+# ================= DASHBOARD =================
+else:
+
+    st.title(f"Welcome {st.session_state.username}")
+
+    # ✅ SIDEBAR ONLY HERE (IMPORTANT FIX)
+    menu = st.sidebar.radio(
+        "📌 Navigation",
+        [
+            "Live Market",
+            "🤖 FinGen Bot",
+            "Personal Finance",
+            "Business Finance",
+            "Loan System",
+            "Risk Analyzer",
+            "Stock Market",
+            "Investment Planner",
+            "Reports",
+            "summary"
+        ]
+    )
 
     if st.button("Logout"):
-        st.session_state.logged_in = False
+        st.session_state.clear()
         st.rerun()
-
-# =========================================================
-# MAIN FLOW
-# =========================================================
-if not st.session_state.logged_in:
-    login_page()
-    st.stop()
-else:
-    welcome_page()
-
-# =========================================================
-# SIDEBAR
-# =========================================================
-menu = st.sidebar.radio(
-    "📌 Navigation",
-    [
-        "Live Market",
-        "🤖 FinGen Bot",
-        "Personal Finance",
-        "Business Finance",
-        "Loan System",
-        "Risk Analyzer",
-        "Stock Market",
-        "Investment Planner",
-        "Reports",
-        "summary"
-    ]
-)
-
-
-
 
 # =========================================================
 # FOOTER
@@ -908,7 +1002,8 @@ elif menu == "Personal Finance":
 
 
             # ================= SAVE TO DB =================
-
+            conn = get_connection()
+            cursor = conn.cursor()
             if conn and cursor:
 
                 query = """
