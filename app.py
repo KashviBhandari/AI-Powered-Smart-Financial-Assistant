@@ -1283,6 +1283,7 @@ elif menu == "Business Finance":
                 "Category",
                 [
                     "Grocery",
+                    "Utensils",
                     "Skincare",
                     "Cosmetics",
                     "Electronics",
