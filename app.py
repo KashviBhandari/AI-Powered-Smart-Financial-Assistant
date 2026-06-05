@@ -687,15 +687,50 @@ if not st.session_state.logged_in:
 
     if menu == "Register":
 
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
+    username = st.text_input("Username")
 
-        if st.button("Register"):
+    password = st.text_input(
+        "Password",
+        type="password"
+    )
+
+    confirm_password = st.text_input(
+        "Re-enter Password",
+        type="password"
+    )
+
+    if st.button("Register"):
+
+        if password != confirm_password:
+            st.error("Passwords do not match")
+
+        else:
             if register_user(username, password):
                 st.success("Registration Successful")
             else:
                 st.error("Username already exists")
 
+else:
+
+    username = st.text_input("Username")
+
+    password = st.text_input(
+        "Password",
+        type="password"
+    )
+
+    if st.button("Login"):
+
+        user = login_user(username, password)
+
+        if user:
+            st.session_state.logged_in = True
+            st.session_state.user_id = user[0]
+            st.session_state.username = user[1]
+            st.rerun()
+
+        else:
+            st.error("Invalid Login")
     else:
 
         username = st.text_input("Username")
@@ -713,9 +748,9 @@ if not st.session_state.logged_in:
                 st.error("Invalid Login")
 
 # ================= DASHBOARD =================
-else:
+        else:
 
-    st.title(f"Welcome {st.session_state.username}")
+            st.title(f"Welcome {st.session_state.username}")
 
     # ✅ SIDEBAR ONLY HERE (IMPORTANT FIX)
     menu = st.sidebar.radio(
@@ -1498,7 +1533,7 @@ elif menu == "Business Finance":
 
             with c4:
                 rate = st.number_input(
-                    f"Rate per {unit}(₹)",
+                    f"Rate per ({unit})(₹)",
                     min_value=0.0,
                     key=f"rate_{i}"
                 )
