@@ -2601,6 +2601,8 @@ elif menu == "Reports":
     # =========================
     # FETCH DATA
     # =========================
+    conn = get_connection()
+    cursor = conn.cursor()
     cursor.execute("SELECT * FROM personal_finance")
     data = cursor.fetchall()
 
