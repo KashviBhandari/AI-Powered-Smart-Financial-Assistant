@@ -1008,7 +1008,7 @@ elif menu == "Personal Finance":
     # =====================================================
     # BUDGET PLANNER
     # =====================================================
-    elif option == "Budget Planner":
+ elif option == "Budget Planner":
 
         st.subheader(" Smart Budget Planner")
 
