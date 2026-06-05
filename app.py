@@ -581,7 +581,7 @@ def create_tables():
     conn.close()
 
     # ================= REGISTER =================
-    def register_user(username, password):
+def register_user(username, password):
 
         username = username.strip()
         password = password.strip()
@@ -641,20 +641,20 @@ def login_user(username, password):
 
     return user
 
-    create_tables()
+create_tables()
 
-    if "logged_in" not in st.session_state:
+if "logged_in" not in st.session_state:
         st.session_state.logged_in = False
 
-    if "username" not in st.session_state:
+if "username" not in st.session_state:
         st.session_state.username = ""
 
-    if "user_id" not in st.session_state:
+if "user_id" not in st.session_state:
         st.session_state.user_id = None
 
 
     # ================= LOGIN PAGE =================
-    if not st.session_state.logged_in:
+if not st.session_state.logged_in:
 
         st.title("User Login / Register")
 
@@ -682,16 +682,16 @@ def login_user(username, password):
                 key="reg_confirm_password"
             )
 
-            if st.button("Register"):
+        if st.button("Register"):
 
-                if password != confirm_password:
-                    st.error("Passwords do not match")
+                    if password != confirm_password:
+                        st.error("Passwords do not match")
 
-                elif register_user(username, password):
-                    st.success("Registration Successful")
+                    elif register_user(username, password):
+                        st.success("Registration Successful")
 
-                else:
-                    st.error("Username already exists")
+                    else:
+                        st.error("Username already exists")
 
         else:
 
@@ -724,11 +724,11 @@ def login_user(username, password):
 
     # ================= DASHBOARD =================
 
-    st.title(
+st.title(
         f"Welcome {st.session_state.username}"
     )
 
-    menu = st.sidebar.radio(
+menu = st.sidebar.radio(
         "📌 Navigation",
         [
             "Live Market",
@@ -744,14 +744,14 @@ def login_user(username, password):
         ]
     )
 
-    if st.sidebar.button("Logout"):
+if st.sidebar.button("Logout"):
         st.session_state.clear()
         st.rerun()
     # =========================================================
     # Live Market
     # =========================================================
 
-    if menu == "Live Market":
+if menu == "Live Market":
 
         st.title("🇮🇳 Indian Live Market Dashboard")
         
@@ -778,58 +778,58 @@ def login_user(username, password):
 
     # ================= LOAD DATA =================
 
-    with st.spinner("Fetching live market data..."):
-        data = get_market_data()
+        with st.spinner("Fetching live market data..."):
+            data = get_market_data()
 
-    gold_price = data["gold"] or 0
-    silver_price = data["silver"] or 0
-    usd_inr = data["usd_inr"] or 0
-    sensex_price = data["sensex"] or 0
-    nifty_price = data["nifty"] or 0
+        gold_price = data["gold"] or 0
+        silver_price = data["silver"] or 0
+        usd_inr = data["usd_inr"] or 0
+        sensex_price = data["sensex"] or 0
+        nifty_price = data["nifty"] or 0
 
-    # Manual fuel prices
-    petrol_price = 104.95
-    diesel_price = 92.72
+        # Manual fuel prices
+        petrol_price = 104.95
+        diesel_price = 92.72
 
     # ================= METRICS =================
 
-    st.markdown("### 📊 Live Market Snapshot")
+        st.markdown("### 📊 Live Market Snapshot")
 
-    col1, col2, col3 = st.columns(3)
+        col1, col2, col3 = st.columns(3)
 
-    col1.metric("🥇 Gold", f"${gold_price:.2f}" if gold_price else "N/A")
-    col2.metric("🥈 Silver", f"${silver_price:.2f}" if silver_price else "N/A")
-    col3.metric("💵 USD/INR", f"₹{usd_inr:.2f}" if usd_inr else "N/A")
+        col1.metric("🥇 Gold", f"${gold_price:.2f}" if gold_price else "N/A")
+        col2.metric("🥈 Silver", f"${silver_price:.2f}" if silver_price else "N/A")
+        col3.metric("💵 USD/INR", f"₹{usd_inr:.2f}" if usd_inr else "N/A")
 
-    col4, col5, col6 = st.columns(3)
+        col4, col5, col6 = st.columns(3)
 
-    col4.metric("⛽ Petrol", f"₹{petrol_price}/L")
-    col5.metric("🛢 Diesel", f"₹{diesel_price}/L")
-    col6.metric("📈 Sensex", f"{sensex_price:.2f}" if sensex_price else "N/A")
+        col4.metric("⛽ Petrol", f"₹{petrol_price}/L")
+        col5.metric("🛢 Diesel", f"₹{diesel_price}/L")
+        col6.metric("📈 Sensex", f"{sensex_price:.2f}" if sensex_price else "N/A")
 
-    st.metric("📊 Nifty 50", f"{nifty_price:.2f}" if nifty_price else "N/A")
+        st.metric("📊 Nifty 50", f"{nifty_price:.2f}" if nifty_price else "N/A")
 
     # ================= TABLE =================
 
-    st.markdown("## 📋 Market Summary")
+        st.markdown("## 📋 Market Summary")
 
-    summary = pd.DataFrame({
-            "Asset": ["Gold", "Silver", "USD/INR", "Petrol", "Diesel", "Sensex", "Nifty"],
-            "Value": [
-                gold_price,
-                silver_price,
-                usd_inr,
-                petrol_price,
-                diesel_price,
-                sensex_price,
-                nifty_price
-            ]
-        })
+        summary = pd.DataFrame({
+                "Asset": ["Gold", "Silver", "USD/INR", "Petrol", "Diesel", "Sensex", "Nifty"],
+                "Value": [
+                    gold_price,
+                    silver_price,
+                    usd_inr,
+                    petrol_price,
+                    diesel_price,
+                    sensex_price,
+                    nifty_price
+                ]
+            })
 
-    st.dataframe(summary, use_container_width=True)
+        st.dataframe(summary, use_container_width=True)
 
-    st.markdown("---")
-    st.markdown("""
+        st.markdown("---")
+        st.markdown("""
 <style>
 
 /* Main App Background */
@@ -896,13 +896,11 @@ section[data-testid="stSidebar"] {
 </style>
 """, unsafe_allow_html=True)
 
-    
-    
 elif menu == "Personal Finance":
 
-    st.title("💸 Personal Finance Dashboard")
+ st.title("💸 Personal Finance Dashboard")
 
-    option = st.radio(
+ option = st.radio(
         "Choose Option",
         ["Expense Tracker", "Budget Planner"]
     )
@@ -911,7 +909,7 @@ elif menu == "Personal Finance":
     # EXPENSE TRACKER
     # =====================================================
 
-    if option == "Expense Tracker":
+ if option == "Expense Tracker":
 
         st.subheader("📊 Expense Tracker")
 
