@@ -1286,6 +1286,7 @@ elif menu == "Business Finance":
                 [
                     "Grocery",
                     "Skincare",
+                    "Cosmetics",
                     "Electronics",
                     "Fashion Boutique",
                     "Clothing",
@@ -1491,7 +1492,7 @@ elif menu == "Business Finance":
             with c3:
                 unit = st.selectbox(
                     "Unit",
-                    ["Kg", "Gram", "Litre", "ML", "Piece"],
+                    ["Kg","Gram","Ton","Liter","Milliliter","Piece","Box","Packet","Dozen","Meter","Centimeter","Foot","Inch","Square Meter","Sqaure Foot","Roll","Sheet","Bottle","Can","Carton","Other"],
                     key=f"unit_{i}"
                 )
 
@@ -1533,9 +1534,38 @@ elif menu == "Business Finance":
             "Packaging Cost (₹)",
             min_value=0.0
         )
+        
+        # Production Unit
+        product_unit = st.selectbox(
+            "Production Unit",
+            [
+            "Kg",
+            "Gram",
+            "Ton",
+            "Liter",
+            "Milliliter",
+            "Piece",
+            "Box",
+            "Packet",
+            "Dozen",
+            "Meter",
+            "Centimeter",
+            "Foot",
+            "Inch",
+            "Square Meter",
+            "Square Foot",
+            "Roll",
+            "Sheet",
+            "Bottle",
+            "Can",
+            "Carton",
+            "Other"
+        ]
+        )
+
 
         quantity_produced = st.number_input(
-            "Production Quantity",
+            f"Production Quantity ({product_unit})",
             min_value=1,
             value=100
         )
