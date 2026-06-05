@@ -2678,6 +2678,8 @@ elif menu == "Reports":
     # =========================
     # DELETE SINGLE RECORD
     # =========================
+    conn = get_connection()
+    cursor = conn.cursor()
     st.markdown("""
     <div class="neo-card">
         <h3 style="color:#b91c1c;">🗑 Delete Single Record</h3>
