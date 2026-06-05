@@ -587,14 +587,12 @@ def create_tables():
 create_tables()
 
 if "logged_in" not in st.session_state:
-st.session_state.logged_in = False
+    st.session_state.logged_in = False
 
 # ================= LOGIN / REGISTER =================
 
 if not st.session_state.logged_in:
-
-```
-st.title("User Login / Register")
+    st.title("User Login / Register")
 
 menu = st.selectbox(
     "Select",
