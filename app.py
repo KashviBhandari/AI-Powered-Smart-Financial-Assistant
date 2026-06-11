@@ -765,7 +765,7 @@ if st.sidebar.button("Logout"):
 
 if menu == "Live Market":
 
-        st.title(Live Market Dashboard")
+        st.title("Live Market Dashboard")
         
 
         # ================= CACHE DATA =================
