@@ -784,8 +784,7 @@ if menu == "Live Market":
                 "gold": safe_get("GC=F"),
                 "silver": safe_get("SI=F"),
                 "usd_inr": safe_get("INR=X"),
-                "sensex": safe_get("^BSESN"),
-                "nifty": safe_get("^NSEI"),
+            
             }
 
     # ================= LOAD DATA =================
@@ -796,8 +795,6 @@ if menu == "Live Market":
         gold_price = data["gold"] or 0
         silver_price = data["silver"] or 0
         usd_inr = data["usd_inr"] or 0
-        sensex_price = data["sensex"] or 0
-        nifty_price = data["nifty"] or 0
 
         # Manual fuel prices
         petrol_price = 104.95
