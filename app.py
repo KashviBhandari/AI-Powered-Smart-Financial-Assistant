@@ -784,7 +784,8 @@ if menu == "Live Market":
                 "gold": safe_get("GC=F"),
                 "silver": safe_get("SI=F"),
                 "usd_inr": safe_get("INR=X"),
-            
+                "sensex": safe_get("^BSESN"),
+                "nifty": safe_get("^NSEI"),
             }
 
     # ================= LOAD DATA =================
@@ -795,6 +796,8 @@ if menu == "Live Market":
         gold_price = data["gold"] or 0
         silver_price = data["silver"] or 0
         usd_inr = data["usd_inr"] or 0
+        sensex_price = data["sensex"] or 0
+        nifty_price = data["nifty"] or 0
 
         # Manual fuel prices
         petrol_price = 104.95
@@ -810,11 +813,14 @@ if menu == "Live Market":
         col2.metric("🥈 Silver", f"${silver_price:.2f}" if silver_price else "N/A")
         col3.metric("💵 USD/INR", f"₹{usd_inr:.2f}" if usd_inr else "N/A")
 
-        col4, col5,  = st.columns(2)
+        col4, col5, col6 = st.columns(3)
 
         col4.metric("⛽ Petrol", f"₹{petrol_price}/L")
         col5.metric("🛢 Diesel", f"₹{diesel_price}/L")
-     
+        col6.metric("📈 Sensex", f"{sensex_price:.2f}" if sensex_price else "N/A")
+
+        st.metric("📊 Nifty 50", f"{nifty_price:.2f}" if nifty_price else "N/A")
+
     # ================= TABLE =================
 
         st.markdown("## 📋 Market Summary")
@@ -827,7 +833,8 @@ if menu == "Live Market":
                     usd_inr,
                     petrol_price,
                     diesel_price,
-                    
+                    sensex_price,
+                    nifty_price
                 ]
             })
 
