@@ -810,14 +810,11 @@ if menu == "Live Market":
         col2.metric("🥈 Silver", f"${silver_price:.2f}" if silver_price else "N/A")
         col3.metric("💵 USD/INR", f"₹{usd_inr:.2f}" if usd_inr else "N/A")
 
-        col4, col5, col6 = st.columns(3)
+        col4, col5,  = st.columns(2)
 
         col4.metric("⛽ Petrol", f"₹{petrol_price}/L")
         col5.metric("🛢 Diesel", f"₹{diesel_price}/L")
-        col6.metric("📈 Sensex", f"{sensex_price:.2f}" if sensex_price else "N/A")
-
-        st.metric("📊 Nifty 50", f"{nifty_price:.2f}" if nifty_price else "N/A")
-
+     
     # ================= TABLE =================
 
         st.markdown("## 📋 Market Summary")
@@ -830,8 +827,7 @@ if menu == "Live Market":
                     usd_inr,
                     petrol_price,
                     diesel_price,
-                    sensex_price,
-                    nifty_price
+                    
                 ]
             })
 
